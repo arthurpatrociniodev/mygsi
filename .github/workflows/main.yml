@@ -51,7 +51,7 @@ jobs:
 
       - name: Install Python Dependencies
         run: |
-          pip3 install backports.lzma protobuf twrpdtgen extract-dtb pycryptodome
+          pip3 install backports.lzma protobuf twrpdtgen extract-dtb pycryptodome google
 
       - name: Prepare and Clean URL
         id: prep
@@ -77,7 +77,7 @@ jobs:
       - name: Run LinkToGSI Script
         run: |
           chmod +x LinkToGSI.sh
-          sudo bash LinkToGSI.sh "$(pwd)/firmware.zip" "${{ inputs.rom_type }}"
+          bash LinkToGSI.sh "$(pwd)/firmware.zip" "${{ inputs.rom_type }}"
 
       - name: Compress GSI (with Fallback)
         run: |
@@ -90,8 +90,9 @@ jobs:
           
           # 2. Compress with xz -4 (Safe for RAM)
           # '|| true' ensures the workflow doesn't stop if compression fails
-          xz -4 -T0 -v *.img || true
-          
+          sudo apt install -y zstd
+          zstd -15 --threads=0 *.img || true
+          #xz -4 -T0 -v *.img || true
           echo "Compression step done. Checking files..."
           ls -lh
 
