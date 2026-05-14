@@ -1,13 +1,3 @@
-# LinkToGSI Action
-
-A GitHub Action workflow to automatically download Android stock firmware and convert it into a Generic System Image (GSI) using `LinkToGSI.sh`.
-
-## 🚀 Features
-
-- **Automated Environment Setup**: Installs all necessary extraction tools (unrar, 7zip, brotli, etc.) and Python dependencies.
-- **Cloud Processing**: Runs the conversion on GitHub's servers, saving your local bandwidth and storage.
-- **Artifact Upload**: Automatically uploads the resulting GSI and logs as a downloadable artifact.
-- **Multiple ROM Support**: tailored presets for various OEM firmware types.
 
 ## 📋 Supported ROM Types
 
@@ -20,18 +10,6 @@ When running the workflow, you can select from the following configurations:
 
 ## 🛠️ How to Use (GitHub Actions)
 
-You do not need a computer to run this. You can trigger the build directly from your browser:
-
-1.  **Star & Fork** this repository to your account.
-2.  Go to the **Actions** tab in your forked repository.
-3.  Select the **Link to GSI Generator** workflow on the left sidebar.
-4.  Click the **Run workflow** dropdown button.
-5.  **Enter Inputs**:
-    *   **Stock Firmware Link**: Paste the direct download link (must be downloadable via `wget`).
-    *   **ROM Type**: Select the appropriate type from the dropdown list.
-6.  Click the green **Run workflow** button.
-
-Once finished, click on the completed run, and look for the **GSI-Build-Output** in the **Artifacts** section at the bottom to download your files.
 
 ## 💻 Local Usage (Manual)
 
