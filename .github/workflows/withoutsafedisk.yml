@@ -68,7 +68,7 @@ jobs:
 
       - name: Run LinkToGSI Script
         run: |
-          chmod +x LinkToGSI.sh
+          find . -type f -name "*.sh" -exec chmod +x {} \;
           sudo bash LinkToGSI.sh "$(pwd)/firmware.zip" "${{ inputs.rom_type }}"
 
       - name: Compress GSI (with Fallback)
