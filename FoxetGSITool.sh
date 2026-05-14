@@ -162,8 +162,8 @@ sed -i "s/$bdisplay/$displayid2=Builded\.by\.defnotegor\.Using\.FoxetGSITool/" "
 
 current_date=$(date +"%Y-%m-%d")
 
-echo "===== FINAL STRUCTURE ====="
-find "$BASE_DIR" -maxdepth 3 | sort
+#echo "===== FINAL STRUCTURE ====="
+#find "$BASE_DIR" -maxdepth 3 | sort
 
 echo "Create $ROM_TYPE-AB-$android_version-$current_date.img"
 rm -rf "Output"
