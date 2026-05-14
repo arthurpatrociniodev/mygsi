@@ -98,6 +98,26 @@ if [ ! -d "ROMsPatches/$android_version/$ROM_TYPE" ]; then
   exit 1
 fi
 
+
+echo "Converting to PHH layout..."
+
+mkdir -p "$BASE_DIR/system"
+
+# Move product into /system/system/product
+if [ -d "$BASE_DIR/product" ] && [ ! -L "$BASE_DIR/product" ]; then
+    mv "$BASE_DIR/product" "$BASE_DIR/system/product"
+fi
+
+# Move system_ext into /system/system/system_ext
+if [ -d "$BASE_DIR/system_ext" ] && [ ! -L "$BASE_DIR/system_ext" ]; then
+    mv "$BASE_DIR/system_ext" "$BASE_DIR/system/system_ext"
+fi
+
+# Create symlinks
+ln -sf system/product "$BASE_DIR/product"
+ln -sf system/system_ext "$BASE_DIR/system_ext"
+
+
 echo "Patching started..."
 Patches/$android_version/make.sh "$BASE_DIR"
 Patches/common/make.sh "$BASE_DIR"
@@ -122,7 +142,10 @@ sed -i "s/$bdisplay/$displayid2=Builded\.by\.defnotegor\.Using\.FoxetGSITool/" "
 
 current_date=$(date +"%Y-%m-%d")
 
+echo "===== FINAL STRUCTURE ====="
+find "$BASE_DIR" -maxdepth 3 | sort
+
 echo "Create $ROM_TYPE-AB-$android_version-$current_date.img"
 rm -rf "Output"
 mkdir -p "Output"
-Tools/mkimage/mkimage.sh "$BASE_DIR" "Output/$ROM_TYPE-AB-$android_version-$current_date-FoxetGSI.img"
+Tools/mkimage/mkimage.sh "$BASE_DIR" "Output/$ROM_TYPE-AB-$android_version-$current_date-Rofikkernel.img"
