@@ -21,8 +21,11 @@ else
     exit 1
 fi
 
-sed -i "/dataservice_app/d" $product/etc/selinux/product_seapp_contexts
-sed -i "/dataservice_app/d" $system_ext/etc/selinux/system_ext_seapp_contexts
+[ -f "$product/etc/selinux/product_seapp_contexts" ] && \
+sed -i "/dataservice_app/d" "$product/etc/selinux/product_seapp_contexts"
+
+[ -f "$system_ext/etc/selinux/system_ext_seapp_contexts" ] && \
+sed -i "/dataservice_app/d" $system_ext/etc/selinux/system_ext_seapp_contexts"
 
 # Delete Google apps
 rm -rf $BASE_DIR/system/app/datastatusnotification
@@ -63,8 +66,6 @@ rm -rf $product/priv-app/ConnMO
 rm -rf $product/priv-app/DCMO
 rm -rf $product/priv-app/SprintDM
 rm -rf $product/priv-app/SprintHM
-rm -rf $product/priv-app/EuiccSupportPixel
-rm -rf $product/priv-app/EuiccGoogle
 rm -rf $product/priv-app/WfcActivation
 rm -rf $product/priv-app/AmbientSensePrebuilt
 rm -rf $product/priv-app/GoogleCamera
@@ -98,6 +99,13 @@ rm -rf $product/app/WallpaperAIPrebuilt*
 
 # Hotword
 rm -rf $product/priv-app/HotwordEnrollment*
-rm -rf $system_ext/framework/com.android.hotwordenrollment*
-rm -rf $system_ext/framework/oat/arm/com.android.hotwordenrollment*
-rm -rf $system_ext/framework/oat/arm64/com.android.hotwordenrollment*
+
+
+echo "===== FINAL LAYOUT ====="
+find "$BASE_DIR/system" -maxdepth 3 -type d | sort
+
+echo "===== PRODUCT ====="
+ls -la "$product"
+
+echo "===== SYSTEM_EXT ====="
+ls -la "$system_ext"
