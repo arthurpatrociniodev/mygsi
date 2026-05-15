@@ -69,35 +69,58 @@ else
     Tools/Firmware_extractor/extractor.sh "DownloadedROMs/"* "UnpackedROMs/"
 fi
 
+# Extract partitions
 for partition in $partitions; do
     if [[ -f "UnpackedROMs/$partition.img" ]]; then
         echo "Unpacking file: UnpackedROMs/$partition.img"
+
         mkdir -p "UnpackedROMs/temp_mount"
         mkdir -p "UnpackedROMs/$partition"
+
         fs_type=$(blkid -o value -s TYPE "UnpackedROMs/$partition.img" 2>/dev/null)
+
         if [[ "$fs_type" == "ext2" || "$fs_type" == "ext4" ]]; then
-            sudo mount -o loop,ro -t ext4 "UnpackedROMs/$partition.img" "UnpackedROMs/temp_mount"
+            sudo mount -o loop,ro -t ext4 \
+                "UnpackedROMs/$partition.img" \
+                "UnpackedROMs/temp_mount"
         else
-            sudo mount "UnpackedROMs/$partition.img" "UnpackedROMs/temp_mount"
+            sudo mount \
+                "UnpackedROMs/$partition.img" \
+                "UnpackedROMs/temp_mount"
         fi
-        cp -r "UnpackedROMs/temp_mount/." "UnpackedROMs/$partition/"
+
+        cp -a "UnpackedROMs/temp_mount/." "UnpackedROMs/$partition/"
+
         sudo umount -R "UnpackedROMs/temp_mount"
     fi
 done
 
-for partition in $partitions; do
-    if [ "$partition" != "system" ]; then
-        if [ -d "UnpackedROMs/system/$partition" ] && [ ! -L "UnpackedROMs/system/$partition" ]; then
-            source_dir="UnpackedROMs/system/$partition"
-        elif [ -d "UnpackedROMs/system/system/$partition" ] && [ ! -L "UnpackedROMs/system/system/$partition" ]; then
-            source_dir="UnpackedROMs/system/system/$partition"
-        else
-            continue
-        fi
+# Internalize dynamic partitions into system
+for partition in product system_ext; do
+
+    # ROM uses symlink placeholder
+    if [ -L "UnpackedROMs/system/$partition" ]; then
+
+        echo "Replacing symlinked $partition with real partition"
+
+        rm -f "UnpackedROMs/system/$partition"
+
         if [ -d "UnpackedROMs/$partition" ]; then
-            echo "Moving $partition into root"
-            mv "UnpackedROMs/$partition" "$source_dir/.."
+            mv "UnpackedROMs/$partition" \
+               "UnpackedROMs/system/$partition"
         fi
+
+    # ROM has no embedded partition
+    elif [ ! -e "UnpackedROMs/system/$partition" ] && \
+         [ -d "UnpackedROMs/$partition" ]; then
+
+        echo "Embedding standalone $partition into system"
+
+        mv "UnpackedROMs/$partition" \
+           "UnpackedROMs/system/$partition"
+    else
+        echo "$partition already embedded in system"
+        rm -rf "UnpackedROMs/$partition"
     fi
 done
 
