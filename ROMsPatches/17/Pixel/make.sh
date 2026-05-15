@@ -87,9 +87,6 @@ rm -rf $product/app/WallpaperAIPrebuilt*
 rm -rf $product/priv-app/HotwordEnrollment*
 
 
-echo "===== FINAL LAYOUT ====="
-find "$BASE_DIR/system" -maxdepth 3 -type d | sort
-
 echo "===== PRODUCT ====="
 ls -la "$product"
 
