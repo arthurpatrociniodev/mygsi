@@ -46,11 +46,12 @@ jobs:
       - name: Install Python Dependencies
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install backports.lzma bsdiff4 twrpdtgen extract-dtb pycryptodome
+          python3 -m pip install protobuf==3.20.3
+          
           
       - name: Install Python Dependencies
         run: |
-          python3 -m pip install protobuf==3.20.3
+          python3 -m pip install backports.lzma bsdiff4 twrpdtgen extract-dtb pycryptodome
       - name: Prepare and Clean URL
         id: prep
         run: |
