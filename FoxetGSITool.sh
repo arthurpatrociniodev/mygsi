@@ -168,7 +168,7 @@ current_date=$(date +"%Y-%m-%d")
 echo "Create $ROM_TYPE-AB-$android_version-$current_date.img"
 rm -rf "Output"
 mkdir -p "Output"
-Tools/mkimage/mkimage.sh "$BASE_DIR" "Output/$ROM_TYPE-AB-$android_version-$current_date-Rofikkernel.img"
+Tools/mkimage/mkimage.sh "$BASE_DIR" "Output/system.img"
 
 FINAL_NAME="$ROM_TYPE-AB-$android_version-$current_date-Rofikkernel"
 
@@ -176,7 +176,7 @@ echo "Compressing image..."
 
 cd Output || exit 1
 
-zip -r9 "${FINAL_NAME}.zip" "${FINAL_NAME}.img"
+zip -r9 "${FINAL_NAME}.zip" "system.img"
 
 echo "Done:"
 ls -lh "${FINAL_NAME}.zip"
