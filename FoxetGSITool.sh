@@ -147,7 +147,7 @@ mkdir -p "Output"
 Tools/mkimage/mkimage.sh "$BASE_DIR" "Output/system.img"
 
 FINAL_NAME="$ROM_TYPE-AB-$android_version-$current_date-Rofikkernel"
-
+bash resetpermission.sh
 echo "Compressing image..."
 
 cd Output || exit 1
@@ -158,4 +158,4 @@ echo "Done:"
 ls -lh "${FINAL_NAME}.zip"
 sudo chown -R $USER:$USER .
 rm system.img
-bash ../resetpermission.sh
+

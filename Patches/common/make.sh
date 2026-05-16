@@ -38,6 +38,30 @@ cat $SCRIPT_DIR/system_build.prop >> $BASE_DIR/system/build.prop
 cat $SCRIPT_DIR/product_build.prop >> $product/etc/build.prop
 cat $SCRIPT_DIR/file_contexts >> $BASE_DIR/system/etc/selinux/plat_file_contexts
 
+# =========================================================
+# RKP / Keymaster compatibility patch (remote provisioning)
+# =========================================================
+
+patch_rkp() {
+    local FILE="$1"
+
+    if [ -f "$FILE" ]; then
+        echo "[RKP PATCH] processing $FILE"
+
+        # comment remote_provisioning lines
+        sed -i 's/^\(remote_provisioning.*\)$/#\1/g' "$FILE"
+
+        echo "[RKP PATCH] done $FILE"
+    else
+        echo "[RKP PATCH] skip missing $FILE"
+    fi
+}
+
+patch_rkp "$BASE_DIR/system/build.prop"
+patch_rkp "$BASE_DIR/system_ext/etc/build.prop"
+patch_rkp "$BASE_DIR/product/etc/build.prop"
+
+
 
 rm -rf $system_ext/etc/permissions/qti_permissions.xml
 rm -rf $system_ext/etc/permissions/com.qti.dpmframework.xml
