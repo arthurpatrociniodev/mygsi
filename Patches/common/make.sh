@@ -48,8 +48,8 @@ patch_rkp() {
     if [ -f "$FILE" ]; then
         echo "[RKP PATCH] processing $FILE"
 
-        # comment remote_provisioning lines
-        sed -i 's/^\(remote_provisioning.*\)$/#\1/g' "$FILE"
+        # comment ALL remote_provisioning lines (not only prefix)
+        sed -i '/remote_provisioning/ s/^/#/g' "$FILE"
 
         echo "[RKP PATCH] done $FILE"
     else
