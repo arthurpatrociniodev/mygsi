@@ -3,6 +3,7 @@
 INPUT_DIR=$1
 ROM_TYPE=$2
 BASE_DIR="Temp/system"
+REAL_VENDOR="UnpackedROMs/vendor"
 
 usage() {
   echo "Usage: $0 [base_directory] [rom_type]"
@@ -112,7 +113,6 @@ tar -xf "Patches/apex/$android_version.tar.xz" -C "$BASE_DIR/system/apex"
 
 echo "Copy Vendor Overlay..."
 
-REAL_VENDOR="UnpackedROMs/vendor"
 
 if [ -d "$REAL_VENDOR" ] && \
    [ "$(find "$REAL_VENDOR" -mindepth 1 | head -n 1)" ]; then
@@ -158,4 +158,4 @@ echo "Done:"
 ls -lh "${FINAL_NAME}.zip"
 sudo chown -R $USER:$USER .
 rm system.img
-sudo chown -R $USER:$USER ../.
+bash ../resetpermission.sh
