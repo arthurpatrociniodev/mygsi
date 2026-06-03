@@ -69,4 +69,5 @@ echo "===== FINAL RESULT ====="
 
 ls -l "$ROFIKKERNEL_DIR"
 
+rm -rf "$BASE_DIR/vendor"
 echo "========== ADDVO DONE =========="

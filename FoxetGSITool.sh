@@ -119,7 +119,7 @@ if [ -d "$REAL_VENDOR" ] && \
 
     echo "Vendor files detected"
 
-    bash Tools/vendoroverlay/addvo.sh "$BASE_DIR"
+ sudo   bash Tools/vendoroverlay/addvo.sh "$BASE_DIR"
 
 else
     echo "Vendor partition empty"
