@@ -55,7 +55,6 @@ mkdir -p DownloadedROMs
 mkdir -p UnpackedROMs
 
 if [ -f "$ROM_LINK" ]; then
-    Tools/Firmware_extractor/extractor.sh "$ROM_LINK" "UnpackedROMs/"
     unzip -o "$ROM_LINK" -d UnpackedROMs
 else
     wget -P "DownloadedROMs/" "$ROM_LINK"
