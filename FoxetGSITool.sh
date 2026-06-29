@@ -118,7 +118,7 @@ elif [[ $(grep "ro.build.id" "$BASE_DIR/system/build.prop") ]]; then
 fi
 displayid2=$(echo "$displayid" | sed 's/\./\\./g')
 bdisplay=$(grep "$displayid" "$BASE_DIR/system/build.prop" | sed 's/\./\\./g; s:/:\\/:g; s/\,/\\,/g; s/\ /\\ /g')
-sed -i "s/$bdisplay/$displayid2=Builded\.by\.defnotegor\.Using\.FoxetGSITool/" "$BASE_DIR/system/build.prop"
+sed -i "s/$bdisplay/$displayid2=Rofikkerneldev" "$BASE_DIR/system/build.prop"
 
 current_date=$(date +"%Y-%m-%d")
 
