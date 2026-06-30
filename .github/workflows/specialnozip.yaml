@@ -1,4 +1,4 @@
-name: Special
+name: SpecialNoZip
 
 on:
   workflow_dispatch:
