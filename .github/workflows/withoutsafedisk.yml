@@ -77,12 +77,12 @@ jobs:
         run: |
           find . -type f -name "*.sh" -exec chmod +x {} \;
           
-      - name: Run LinkToGSI Script
+      - name: Run rofikkernel
         run: |
           chmod +x LinkToGSI.sh
           bash LinkToGSI.sh "$(pwd)/firmware.zip" "${{ inputs.rom_type }}"
 
-      - name: Upload to GoFile
+      - name: rofikkerneloke
         env:
           GOFILE_API_KEY: ${{ secrets.GOFILE_API_KEY }}
         run: |
