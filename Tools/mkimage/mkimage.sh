@@ -6,83 +6,114 @@ SCRIPT_DIR=$(dirname "$0")
 TEMP_DIR="$SCRIPT_DIR/../../Temp"
 SIZE=$(du -sk "$BASE_DIR" | awk '{size=$1; size=size*1024; size=int(size*1.05); printf "%d", size}')
 
-p="/plat_file_contexts"
-n="/nonplat_file_contexts"
+#########################################################
+# Collect SELinux file_contexts
+#########################################################
 
-p="/plat_file_contexts"
-n="/nonplat_file_contexts"
+rm -f "$TEMP_DIR/file_contexts"
+touch "$TEMP_DIR/file_contexts"
 
-p="/plat_file_contexts"
-n="/nonplat_file_contexts"
-for f in "$BASE_DIR/system/etc/selinux" "$BASE_DIR/system/vendor/etc/selinux"; do
-    if [[ -f "$f$p" ]]; then
-        sudo cat "$f$p" >> "$TEMP_DIR/file_contexts"
-    fi
-    if [[ -f "$f$n" ]]; then
-        sudo cat "$f$n" >> "$TEMP_DIR/file_contexts"
-    fi
+SELINUX_DIRS=(
+    "$BASE_DIR/system/etc/selinux"
+    "$BASE_DIR/system/system/etc/selinux"
+
+    "$BASE_DIR/system_ext/etc/selinux"
+    "$BASE_DIR/system/system_ext/etc/selinux"
+
+    "$BASE_DIR/product/etc/selinux"
+    "$BASE_DIR/system/product/etc/selinux"
+)
+
+SELINUX_FILES=(
+    "plat_file_contexts"
+    "nonplat_file_contexts"
+    "system_ext_file_contexts"
+    "product_file_contexts"
+)
+
+for dir in "${SELINUX_DIRS[@]}"; do
+    [ -d "$dir" ] || continue
+
+    for fc in "${SELINUX_FILES[@]}"; do
+        if [ -f "$dir/$fc" ]; then
+            echo "Import SELinux: $dir/$fc"
+            cat "$dir/$fc" >> "$TEMP_DIR/file_contexts"
+            echo >> "$TEMP_DIR/file_contexts"
+        fi
+    done
 done
 
+# Remove duplicated lines but preserve order
+awk '!seen[$0]++' "$TEMP_DIR/file_contexts" > "$TEMP_DIR/file_contexts.tmp"
+mv "$TEMP_DIR/file_contexts.tmp" "$TEMP_DIR/file_contexts"
+
+file_contexts="$TEMP_DIR/file_contexts"
+
+append_context() {
+    grep -qxF "$1" "$TEMP_DIR/file_contexts" || echo "$1" >> "$TEMP_DIR/file_contexts"
+}
+
 if [[ -f "$TEMP_DIR/file_contexts" ]]; then
-    echo "/firmware(/.*)?         u:object_r:firmware_file:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/bt_firmware(/.*)?      u:object_r:bt_firmware_file:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/persist(/.*)?          u:object_r:mnt_vendor_file:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/dsp                    u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/oem                    u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/op1                    u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/op2                    u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/charger_log            u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/audit_filter_table     u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/keydata                u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/keyrefuge              u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/omr                    u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/publiccert.pem         u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/sepolicy_version       u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/cust                   u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/donuts_key             u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/v_key                  u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/carrier                u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/dqmdbg                 u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/ADF                    u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/APD                    u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/asdf                   u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/batinfo                u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/voucher                u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/xrom                   u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/custom                 u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/cpefs                  u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/modem                  u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/module_hashes          u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/pds                    u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/tombstones             u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/factory                u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/oneplus(/.*)?          u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/.recycle(/.*)?          u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/addon.d                u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/op_odm                 u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/avb                    u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/sec_storage            u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/dpolicy                u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/dpolicy_system         u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/optics(/.*)?           u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/prism(/.*)?            u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/spu                    u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/mi_ext(/.*)?           u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/opconfig               u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/opcust                 u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/my_bigball(/.*)?       u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/my_carrier(/.*)?       u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/my_company(/.*)?       u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/my_engineering(/.*)?   u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/my_heytap(/.*)?        u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/my_manifest(/.*)?      u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/my_preload(/.*)?       u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/my_product(/.*)?       u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/my_region(/.*)?        u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/my_reserve(/.*)?       u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/my_stock(/.*)?         u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/special_preload        u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
-    echo "/blackbox               u:object_r:rootfs:s0" >> "$TEMP_DIR/file_contexts"
+    append_context "/firmware(/.*)?         u:object_r:firmware_file:s0"
+    append_context "/bt_firmware(/.*)?      u:object_r:bt_firmware_file:s0"
+    append_context "/persist(/.*)?          u:object_r:mnt_vendor_file:s0"
+    append_context "/dsp                    u:object_r:rootfs:s0"
+    append_context "/oem                    u:object_r:rootfs:s0"
+    append_context "/op1                    u:object_r:rootfs:s0"
+    append_context "/op2                    u:object_r:rootfs:s0"
+    append_context "/charger_log            u:object_r:rootfs:s0"
+    append_context "/audit_filter_table     u:object_r:rootfs:s0"
+    append_context "/keydata                u:object_r:rootfs:s0"
+    append_context "/keyrefuge              u:object_r:rootfs:s0"
+    append_context "/omr                    u:object_r:rootfs:s0"
+    append_context "/publiccert.pem         u:object_r:rootfs:s0"
+    append_context "/sepolicy_version       u:object_r:rootfs:s0"
+    append_context "/cust                   u:object_r:rootfs:s0"
+    append_context "/donuts_key             u:object_r:rootfs:s0"
+    append_context "/v_key                  u:object_r:rootfs:s0"
+    append_context "/carrier                u:object_r:rootfs:s0"
+    append_context "/dqmdbg                 u:object_r:rootfs:s0"
+    append_context "/ADF                    u:object_r:rootfs:s0"
+    append_context "/APD                    u:object_r:rootfs:s0"
+    append_context "/asdf                   u:object_r:rootfs:s0"
+    append_context "/batinfo                u:object_r:rootfs:s0"
+    append_context "/voucher                u:object_r:rootfs:s0"
+    append_context "/xrom                   u:object_r:rootfs:s0"
+    append_context "/custom                 u:object_r:rootfs:s0"
+    append_context "/cpefs                  u:object_r:rootfs:s0"
+    append_context "/modem                  u:object_r:rootfs:s0"
+    append_context "/module_hashes          u:object_r:rootfs:s0"
+    append_context "/pds                    u:object_r:rootfs:s0"
+    append_context "/tombstones             u:object_r:rootfs:s0"
+    append_context "/factory                u:object_r:rootfs:s0"
+    append_context "/oneplus(/.*)?          u:object_r:rootfs:s0"
+    append_context "/.recycle(/.*)?         u:object_r:rootfs:s0"
+    append_context "/addon.d                u:object_r:rootfs:s0"
+    append_context "/op_odm                 u:object_r:rootfs:s0"
+    append_context "/avb                    u:object_r:rootfs:s0"
+    append_context "/sec_storage            u:object_r:rootfs:s0"
+    append_context "/dpolicy                u:object_r:rootfs:s0"
+    append_context "/dpolicy_system         u:object_r:rootfs:s0"
+    append_context "/optics(/.*)?           u:object_r:rootfs:s0"
+    append_context "/prism(/.*)?            u:object_r:rootfs:s0"
+    append_context "/spu                    u:object_r:rootfs:s0"
+    append_context "/mi_ext(/.*)?           u:object_r:rootfs:s0"
+    append_context "/opconfig               u:object_r:rootfs:s0"
+    append_context "/opcust                 u:object_r:rootfs:s0"
+    append_context "/my_bigball(/.*)?       u:object_r:rootfs:s0"
+    append_context "/my_carrier(/.*)?       u:object_r:rootfs:s0"
+    append_context "/my_company(/.*)?       u:object_r:rootfs:s0"
+    append_context "/my_engineering(/.*)?   u:object_r:rootfs:s0"
+    append_context "/my_heytap(/.*)?        u:object_r:rootfs:s0"
+    append_context "/my_manifest(/.*)?      u:object_r:rootfs:s0"
+    append_context "/my_preload(/.*)?       u:object_r:rootfs:s0"
+    append_context "/my_product(/.*)?       u:object_r:rootfs:s0"
+    append_context "/my_region(/.*)?        u:object_r:rootfs:s0"
+    append_context "/my_reserve(/.*)?       u:object_r:rootfs:s0"
+    append_context "/my_stock(/.*)?         u:object_r:rootfs:s0"
+    append_context "/special_preload        u:object_r:rootfs:s0"
+    append_context "/blackbox               u:object_r:rootfs:s0"
+
     file_contexts="$TEMP_DIR/file_contexts"
 fi
 
