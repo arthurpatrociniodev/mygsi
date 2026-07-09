@@ -19,7 +19,7 @@ on:
           - Generic
 
 jobs:
-  Link2GSI:
+  RofikKernelDev:
     runs-on: ubuntu-latest
     
     steps:
