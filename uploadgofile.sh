@@ -9,7 +9,12 @@ FILE="$1"
 
 echo "Getting GoFile server..."
 
-SERVER=$(curl -s https://api.gofile.io/servers | jq -r '.data.servers[0].name')
+RAW=$(curl -L -s https://api.gofile.io/servers)
+
+echo "RAW:"
+echo "$RAW"
+
+SERVER=$(echo "$RAW" | jq -r '.data.servers[0].name')
 
 echo "Using server: $SERVER"
 
