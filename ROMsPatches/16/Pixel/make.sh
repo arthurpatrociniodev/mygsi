@@ -33,16 +33,6 @@ rm -rf $BASE_DIR/system/priv-app/CNEService
 rm -rf $BASE_DIR/system/priv-app/DMService
 rm -rf $BASE_DIR/system/priv-app/VzwOmaTrigger
 rm -rf $BASE_DIR/system/etc/permissions/com.google.android.camera.experimental2017.xml
-rm -rf $product/app/YouTube
-rm -rf $product/app/YouTubeMusicPrebuilt
-rm -rf $product/app/PrebuiltGmail
-rm -rf $product/app/Maps
-rm -rf $product/app/Drive
-rm -rf $product/app/DiagnosticsToolPrebuilt
-rm -rf $product/app/CalendarGooglePrebuilt
-rm -rf $product/app/NgaResources
-rm -rf $product/app/GoogleCamera
-rm -rf $product/app/WallpapersBReel*
 rm -rf $product/priv-app/EuiccGoogle
 rm -rf $product/priv-app/WfcActivation
 rm -rf $product/priv-app/GoogleCamera
